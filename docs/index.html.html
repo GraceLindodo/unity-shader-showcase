@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Unity Shader 展示 + 美術 AI 製程</title>
+<style>
+  :root{ --bg:#0b0f17; --card:#121826; --text:#e6ecff; --muted:#9bb0ff; --accent:#7aa2ff; }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);
+    font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans TC',PingFangTC,'Microsoft JhengHei',sans-serif;line-height:1.65}
+  a{color:var(--accent);text-decoration:none}
+  .wrap{max-width:1200px;margin:0 auto;padding:24px}
+  .hero{border-radius:20px;background:radial-gradient(1100px 600px at 80% -20%, rgba(255,136,64,.22), transparent 60%),radial-gradient(900px 500px at -10% 0%, rgba(122,162,255,.2), transparent 60%),#121826;
+        padding:56px 24px;margin:20px 0;box-shadow:0 10px 40px rgba(0,0,0,.4), inset 0 0 0 1px rgba(255,255,255,.04)}
+  .hero h1{margin:0 0 8px;font-size:32px}
+  .hero p{margin:0;color:var(--muted)}
+  .btnrow{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .tab-btn{cursor:pointer;border-radius:10px;padding:10px 14px;font-weight:700;
+           border:1px solid rgba(188,208,255,.35);background:transparent;color:#bcd0ff;transition:.2s ease}
+  .tab-btn:hover{filter:brightness(1.1)}
+  .tab-btn.active{border-color:transparent;background:linear-gradient(135deg,#6ea8ff,#8bc2ff);color:#0a1020;
+                  box-shadow:0 0 0 2px rgba(122,162,255,.25) inset}
+  section{margin:32px 0}
+  h2{margin:0 0 12px;font-size:22px}
+  .grid{display:grid;gap:16px}
+  .col-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  @media (max-width:960px){.col-2{grid-template-columns:1fr}}
+  .card{background:#121826;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px}
+  .step{display:flex;gap:12px;align-items:flex-start}
+  .num{width:28px;height:28px;border-radius:8px;background:#213052;color:#cfe0ff;display:flex;align-items:center;justify-content:center;font-weight:700}
+  .shot{border-radius:12px;overflow:hidden;border:1px solid rgba(200,212,255,.18);background:#0f1524}
+  .shot img{width:100%;height:auto;display:block}
+  table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden}
+  th,td{padding:12px;border-bottom:1px solid rgba(255,255,255,.06);vertical-align:top}
+  th{background:#162238;text-align:left}
+  tr:last-child td{border-bottom:0}
+  .footer{opacity:.7;font-size:13px;margin:32px 0 64px;text-align:center}
+  .tab-content{display:none}
+  .tab-content.active{display:block}
+  .video-link{display:inline-block;padding:12px 18px;background:#ffb973;color:#000;font-weight:bold;
+              border-radius:12px;text-decoration:none;box-shadow:0 3px 6px rgba(0,0,0,.25)}
+  .video-link:hover{background:#ffc78a}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <h1>Unity Shader 火焰框展示 & 美術 AI 製程</h1>
+    <p>展示 Unity Shader 特效成果，並延伸美術運用 AI 的製作流程。</p>
+    <div class="btnrow">
+      <button class="tab-btn active" data-target="tab-shader">Unity Shader 製程</button>
+      <button class="tab-btn" data-target="tab-art">美術運用 AI 優勢</button>
+    </div>
+  </header>
+
+  <!-- Unity Shader 製程 -->
+  <div id="tab-shader" class="tab-content active">
+    <section id="process">
+      <h2>Unity Shader 製程（FlameBox VFX Pipeline）</h2>
+      <div class="grid col-2">
+        <div class="card">
+          <div class="step"><div class="num">1</div><div><b>需求確認</b>：矩形邊框火焰、自適應直橫畫面。</div></div>
+          <div class="step"><div class="num">2</div><div><b>Shader 設計</b>：Unlit + Flipbook + Noise + 方向/重複數。</div></div>
+          <div class="step"><div class="num">3</div><div><b>Mesh/Prefab</b>：四邊分段，GPU Instancing，共用材質。</div></div>
+        </div>
+        <div class="card">
+          <div class="step"><div class="num">4</div><div><b>自適應腳本</b>：以 1920×1080 為基準，動態調整。</div></div>
+          <div class="step"><div class="num">5</div><div><b>跨平台測試</b>：WebGL / Android / iOS 顯示與排序驗證。</div></div>
+          <div class="step"><div class="num">6</div><div><b>打包釋出</b>：UnityPackage + 報告/網站整合。</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="showcase">
+      <h2>成果展示</h2>
+      <div class="grid col-2">
+        <div class="card">
+          <div class="shot"><img loading="lazy" src="image/shader_fire_game.png" alt="遊戲畫面直橫展示"/></div>
+          <div style="margin-top:8px;color:#9bb0ff">遊戲畫面：直橫展示</div>
+        </div>
+        <div class="card">
+          <div class="shot"><img loading="lazy" src="image/shader_fire_3.png" alt="Prefab 資源打包畫面"/></div>
+          <div style="margin-top:8px;color:#9bb0ff">Prefab 資源：材質 / Shader / 貼圖 / 腳本</div>
+        </div>
+      </div>
+      <div style="margin-top:20px;text-align:center">
+        <a href="image/full_fire.mp4" target="_blank" class="video-link">
+          ▶ 點此觀看完整火焰效果影片
+        </a>
+      </div>
+    </section>
+
+    <section id="compare">
+      <h2>Shader 特效 vs 傳統整頁特效｜優缺點比較表</h2>
+      <div class="card" style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr><th>分類</th><th>Shader 特效</th><th>傳統整頁特效</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>優點</b></td>
+              <td>・圖量資源占用低（小貼圖或噪聲圖）<br/>・動態彈性高（程式可控尺寸/顏色/UV 扭曲）<br/>・效能佳（GPU 即時計算，跨平台適用）<br/>・可接遊戲數值驅動特效強度</td>
+              <td>・所見即所得，視覺質感穩定<br/>・細節可極致雕琢，藝術完全掌控<br/>・AI 可直接產生整頁或序列幀快速佈景</td>
+            </tr>
+            <tr>
+              <td><b>缺點</b></td>
+              <td>・需具 Shader/GPU 基礎與測試<br/>・設計思維偏程式化，初學成本較高<br/>・平台相容性需額外驗證（如 WebGL）</td>
+              <td>・圖量資源較高、檔案肥大<br/>・彈性不足（顏色/大小固定）<br/>・解析度綁定，泛用性較差</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="conclusion">
+      <h2>📌 優化後結論</h2>
+      <div class="card">
+        <p><b>Shader 特效：</b>適合強調效能、跨平台、動態控制的需求，能大幅減少圖量資源並提升效能表現。</p>
+        <p><b>傳統整頁特效：</b>適合一次性場景或需要精緻細節與固定效果的情境，直觀且所見即所得。</p>
+        <p><b>混合使用：</b>在專案中可靈活搭配，主動態效果交由 Shader，細節裝飾或特殊場景交給整頁貼圖，兼顧效能與美術表現。</p>
+        <p><b>AI 技術導入：</b>隨著 GPT、Stable Diffusion 等生成式 AI 的加入，美術製作門檻大幅降低，不僅能快速生成貼圖、噪聲圖與序列幀，也能透過與 GPT 的來回互動獲得即時的程式範例與製作步驟。AI 已逐漸成為新一代美術特效製作流程的一環，讓團隊更快迭代、更有效率地完成跨平台特效設計。</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- 美術運用 AI 優勢製程 -->
+  <div id="tab-art" class="tab-content">
+    <section id="ai-art">
+      <h2>🎨 美術如何運用 AI 優勢優化製作流程</h2>
+      <div class="card">
+        <h3>1. 素材生成加速</h3>
+        <p>快速生成貼圖：透過 Stable Diffusion 或其他影像生成 AI，可快速產生高解析度貼圖（如火焰、煙霧、石材、布料、金屬紋理）。</p>
+        <p>自動化噪聲圖/遮罩圖：Shader 製作常需用到的 Noise/Mask，AI 可自動生成變化豐富的圖像。</p>
+        <p>序列幀動畫：能自動輸出火焰、爆炸、流光等 Flipbook，但目前這塊只能提供簡單的序列.還是需要特效製作修飾與調整細節。</p>
+
+        <h3>2. 程式與製作輔助</h3>
+        <p>即時獲取程式碼：透過 GPT 快速取得 Unity Shader / C# 腳本範例。</p>
+        <p>自動化製作流程：可請 GPT 提供一鍵化流程腳本，加速 prefab、shader 配置。</p>
+        <p>錯誤排查協助：Shader 或腳本 bug 時，AI 能協助 debug。</p>
+
+        <h3>3. 跨平台效能優化</h3>
+        <p>多平台貼圖縮放與格式轉換：AI 批次輸出適合各平台的壓縮格式。</p>
+        <p>Shader 參數最佳化：GPT 建議精簡 Shader、降低 Draw Call。</p>
+        <p>動態測試：AI 提供測試腳本，快速檢查不同硬體的效果。</p>
+
+        <h3>4. 迭代與實驗</h3>
+        <p>快速原型：AI 能短時間輸出多組效果圖或動畫，供比較。</p>
+        <p>版本管理：AI 可生成不同風格素材，幫助探索多樣性。</p>
+        <p>互動式教學：美術視覺化調整可邊問 GPT 技術問題，邊得到操作步驟，不像以往會因程式技術問題卡關。</p>
+
+        <h3>5. 團隊合作與知識沉澱</h3>
+        <p>降低學習門檻：美術可透過 GPT 學習 Shader 與特效。</p>
+        <p>標準化流程文件：AI 整理技術文檔與教學手冊。</p>
+        <p>快速溝通橋樑：GPT 程式範例作為美術與程式的溝通基礎。</p>
+
+        <h3>📌 優化後的流程總結</h3>
+        <p>AI 生成初稿 → 美術視覺調整與修飾 → AI 協助整合 → 跨平台測試 → 文件與教學</p>
+        <p>👉 結合 Stable Diffusion + GPT，形成閉環，雖然還需來回測試實作，但已加速迭代並降低成本。</p>
+      </div>
+    </section>
+  </div>
+
+  <p class="footer">© 2025 — Unity Shader 展示 & 美術 AI 製程（最終版）</p>
+</div>
+
+<script>
+function showTabById(tabId){
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  const btn=document.querySelector(`.tab-btn[data-target="${tabId}"]`);
+  if(btn) btn.classList.add('active');
+}
+document.querySelectorAll('.tab-btn').forEach(b=>{
+  b.addEventListener('click', ()=>showTabById(b.dataset.target));
+});
+</script>
+</body>
+</html>
