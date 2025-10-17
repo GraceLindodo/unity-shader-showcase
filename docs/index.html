@@ -5,44 +5,163 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Unity Shader 展示 + 美術 AI 製程</title>
 <style>
-  :root{ --bg:#0b0f17; --card:#121826; --text:#e6ecff; --muted:#9bb0ff; --accent:#7aa2ff; }
-  *{box-sizing:border-box}
-  html,body{margin:0;background:var(--bg);color:var(--text);
-    font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans TC',PingFangTC,'Microsoft JhengHei',sans-serif;line-height:1.65}
-  a{color:var(--accent);text-decoration:none}
-  .wrap{max-width:1200px;margin:0 auto;padding:24px}
-  .hero{border-radius:20px;background:radial-gradient(1100px 600px at 80% -20%, rgba(255,136,64,.22), transparent 60%),radial-gradient(900px 500px at -10% 0%, rgba(122,162,255,.2), transparent 60%),#121826;
-        padding:56px 24px;margin:20px 0;box-shadow:0 10px 40px rgba(0,0,0,.4), inset 0 0 0 1px rgba(255,255,255,.04)}
-  .hero h1{margin:0 0 8px;font-size:32px}
-  .hero p{margin:0;color:var(--muted)}
-  .btnrow{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
-  .tab-btn{cursor:pointer;border-radius:10px;padding:10px 14px;font-weight:700;
-           border:1px solid rgba(188,208,255,.35);background:transparent;color:#bcd0ff;transition:.2s ease}
-  .tab-btn:hover{filter:brightness(1.1)}
-  .tab-btn.active{border-color:transparent;background:linear-gradient(135deg,#6ea8ff,#8bc2ff);color:#0a1020;
-                  box-shadow:0 0 0 2px rgba(122,162,255,.25) inset}
-  section{margin:32px 0}
-  h2{margin:0 0 12px;font-size:22px}
-  .grid{display:grid;gap:16px}
-  .col-2{grid-template-columns:repeat(2,minmax(0,1fr))}
-  @media (max-width:960px){.col-2{grid-template-columns:1fr}}
-  .card{background:#121826;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px}
-  .step{display:flex;gap:12px;align-items:flex-start}
-  .num{width:28px;height:28px;border-radius:8px;background:#213052;color:#cfe0ff;display:flex;align-items:center;justify-content:center;font-weight:700}
-  .shot{border-radius:12px;overflow:hidden;border:1px solid rgba(200,212,255,.18);background:#0f1524}
-  .shot img{width:100%;height:auto;display:block}
-  table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden}
-  th,td{padding:12px;border-bottom:1px solid rgba(255,255,255,.06);vertical-align:top}
-  th{background:#162238;text-align:left}
-  tr:last-child td{border-bottom:0}
-  .footer{opacity:.7;font-size:13px;margin:32px 0 64px;text-align:center}
-  .tab-content{display:none}
-  .tab-content.active{display:block}
-  .video-link{display:inline-block;padding:12px 18px;background:#ffb973;color:#000;font-weight:bold;
-              border-radius:12px;text-decoration:none;box-shadow:0 3px 6px rgba(0,0,0,.25)}
-  .video-link:hover{background:#ffc78a}
+/* === 重點標記 === */
+.highlight{
+  background: linear-gradient(90deg, rgba(228,116,200,.562) 0%, rgba(211,105,176,.61) 100%);
+  color:#ffffff; padding:2px 4px; border-radius:4px; font-weight:600;
+}
+.highlight-blue{
+  background: linear-gradient(90deg, rgba(80,130,255,.25) 0%, rgba(100,170,255,.25) 100%);
+  color:#bcd0ff; padding:2px 4px; border-radius:4px; font-weight:500;
+}
+
+/* === 主題與版面 === */
+:root{ --bg:#0b0f17; --card:#121826; --text:#e6ecff; --muted:#9bb0ff; --accent:#7aa2ff; }
+*{box-sizing:border-box}
+html,body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans TC',PingFangTC,'Microsoft JhengHei',sans-serif;
+  line-height:1.65
+}
+a{color:var(--accent);text-decoration:none}
+.wrap{max-width:1200px;margin:0 auto;padding:24px;}
+section{margin:32px 0}
+
+/* === Hero === */
+.hero{
+  border-radius:20px;
+  background:
+    radial-gradient(1100px 600px at 80% -20%, rgba(255,136,64,.22), transparent 60%),
+    radial-gradient(900px 500px at -10% 0%, rgba(122,162,255,.2), transparent 60%),
+    #121826;
+  padding:56px 24px;margin:20px 0;
+  box-shadow:0 10px 40px rgba(0,0,0,.4), inset 0 0 0 1px rgba(255,255,255,.04)
+}
+.hero h1{margin:0 0 8px;font-size:32px}
+.hero p{margin:0;color:var(--muted)}
+.btnrow{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.tab-btn{
+  cursor:pointer;border-radius:10px;padding:10px 14px;font-weight:700;
+  border:1px solid rgba(188,208,255,.35);background:transparent;color:#bcd0ff;transition:.2s ease
+}
+.tab-btn:hover{filter:brightness(1.1)}
+.tab-btn.active{
+  border-color:transparent;background:linear-gradient(135deg,#6ea8ff,#8bc2ff);color:#0a1020;
+  box-shadow:0 0 0 2px rgba(122,162,255,.25) inset
+}
+
+/* === 共用元件 === */
+h2{margin:0 0 12px;font-size:22px}
+.grid{display:grid;gap:16px}
+.col-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:960px){.col-2{grid-template-columns:1fr}}
+.card{background:#121826;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:16px}
+.step{display:flex;gap:12px;align-items:flex-start}
+.num{width:28px;height:28px;border-radius:8px;background:#213052;color:#cfe0ff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.shot{border-radius:12px;overflow:hidden;border:1px solid rgba(200,212,255,.18);background:#0f1524}
+.shot img{width:100%;height:auto;display:block}
+
+/* === 表格（淺藍由下至上漸層） === */
+table{
+  width:100%;border-collapse:separate;border-spacing:0;
+  border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden;
+  box-shadow:0 0 10px rgba(80,130,255,.1) inset
+}
+th{
+  background:linear-gradient(180deg,#3a4b6a 0%, #556d94 100%);
+  color:#eaf1ff;text-align:left;font-weight:700;
+  padding:12px 0 12px 12px; /* 左側留白一字距 */
+  border-bottom:1px solid rgba(255,255,255,.1)
+}
+td{
+  background:linear-gradient(180deg,#141d33 0%, #1b2844 100%);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  padding:12px;vertical-align:top
+}
+tr:nth-child(even) td{background:linear-gradient(180deg,#16233f 0%, #1f3053 100%)}
+tr:last-child td{border-bottom:0}
+
+/* === Footer / Tabs === */
+.footer{opacity:.7;font-size:13px;margin:32px 0 64px;text-align:center}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.video-link{display:inline-block;padding:12px 18px;background:#ffb973;color:#000;font-weight:bold;border-radius:12px;text-decoration:none;box-shadow:0 3px 6px rgba(0,0,0,.25)}
+.video-link:hover{background:#ffc78a}
+
+/* === 工作流相簿（自適應＋捲動列） === */
+.hscroll{
+  display:flex;gap:12px;overflow-x:auto;padding:12px;
+  border:1px dashed rgba(255,255,255,.15);border-radius:12px;background:rgba(18,24,38,.6)
+}
+/* 卡片：上方媒體、下方文字說明 */
+.ph{
+  min-width:320px;height:220px;
+  display:flex;flex-direction:column;
+  border:1px dashed rgba(200,212,255,.35);
+  border-radius:12px;background:#0f1524;color:#9bb0ff;
+  overflow:hidden
+}
+.ph .media{position:relative;flex:1;overflow:hidden;border-radius:12px}
+.ph .media img,.ph .media video{
+  width:100%;height:100%;object-fit:cover;display:block;cursor:zoom-in;user-select:none
+}
+.ph .cap{font-size:14px;line-height:1.4;padding:6px 8px 8px;text-align:center;color:#9bb0ff}
+@media (max-width:960px){.ph{min-width:240px;height:180px}}
+
+/* 捲動條黑底 */
+.hscroll::-webkit-scrollbar{height:10px}
+.hscroll::-webkit-scrollbar-track{background:#0a0a0a;border-radius:8px}
+.hscroll::-webkit-scrollbar-thumb{background:#262626;border-radius:8px;border:2px solid #0a0a0a}
+.hscroll::-webkit-scrollbar-thumb:hover{background:#333}
+.hscroll{scrollbar-width:thin;scrollbar-color:#262626 #0a0a0a}
+
+/* 影片預覽：加上播放徽章 */
+.ph .media.has-video::after{
+  content:'▶';
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  background:rgba(0,0,0,.45);
+  border:1px solid rgba(255,255,255,.25);
+  border-radius:9999px;
+  padding:10px 14px; font-size:18px; color:#fff;
+  pointer-events:none; box-shadow:0 4px 14px rgba(0,0,0,.35);
+}
+
+/* === Lightbox（圖片 / 影片） === */
+.lightbox{
+  position:fixed;inset:0;background:rgba(0,0,0,.82);
+  display:none;align-items:center;justify-content:center;z-index:9999
+}
+.lightbox.open{display:flex}
+.lightbox .lb-inner video,.lightbox .lb-inner img{
+  max-width:92vw;max-height:92vh;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.45)
+}
+.lightbox .close,.lightbox .nav{
+  position:absolute;border:1px solid rgba(255,255,255,.18);
+  background:rgba(18,24,38,.6);color:#fff;border-radius:12px;
+  padding:8px 12px;cursor:pointer;font-size:20px;backdrop-filter:blur(6px)
+}
+.lightbox .close{top:14px;right:14px}
+.lightbox .nav.prev{left:14px;top:50%;transform:translateY(-50%)}
+.lightbox .nav.next{right:14px;top:50%;transform:translateY(-50%)}
+.lightbox .close:hover,.lightbox .nav:hover{filter:brightness(1.1)}
+
+/* 右側浮動回到頁籤按鈕 */
+.float-back{
+  position:fixed; right:18px; bottom:24px;
+  z-index:10000; border:none; cursor:pointer;
+  border-radius:9999px; padding:12px 14px;
+  background:linear-gradient(135deg,#6ea8ff,#8bc2ff);
+  color:#0a1020; font-weight:800;
+  box-shadow:0 8px 24px rgba(0,0,0,.35), 0 0 0 2px rgba(122,162,255,.25) inset;
+}
+.float-back:hover{filter:brightness(1.05)}
+
+.tab-content:not(#tab-workflow) #mj-gallery { display:none !important; }
+#tab-workflow:not(.active) #mj-gallery { display:none !important; }
+
 </style>
 </head>
+
 <body>
 <div class="wrap">
   <header class="hero">
@@ -50,7 +169,9 @@
     <p>展示 Unity Shader 特效成果，並延伸美術運用 AI 的製作流程。</p>
     <div class="btnrow">
       <button class="tab-btn active" data-target="tab-shader">Unity Shader 製程</button>
-      <button class="tab-btn" data-target="tab-art">美術運用 AI 優勢</button>
+      <button class="tab-btn" data-target="tab-workflow">原畫＋AI 工作流</button>
+      <button class="tab-btn" data-target="tab-art">其他美術運用 AI 優勢</button>
+      
     </div>
   </header>
 
@@ -76,19 +197,31 @@
       <h2>成果展示</h2>
       <div class="grid col-2">
         <div class="card">
-          <div class="shot"><img loading="lazy" src="image/shader_fire_game.png" alt="遊戲畫面直橫展示"/></div>
+          <div class="shot"><img src="image/shader_fire_game.png" alt="遊戲畫面直橫展示"/></div>
           <div style="margin-top:8px;color:#9bb0ff">遊戲畫面：直橫展示</div>
         </div>
+        
         <div class="card">
-          <div class="shot"><img loading="lazy" src="image/shader_fire_3.png" alt="Prefab 資源打包畫面"/></div>
-          <div style="margin-top:8px;color:#9bb0ff">Prefab 資源：材質 / Shader / 貼圖 / 腳本</div>
+          <div class="shot"><img src="image/shader_lighting_game.png" alt="遊戲畫面直橫展示"/></div>
+          <div style="margin-top:8px;color:#9bb0ff">遊戲畫面：直橫展示</div>
         </div>
+        <div style="margin-top:20px;text-align:center">
+        <a href="image/full_fire.mp4" target="_blank" class="video-link">▶ 點此觀看完整火焰效果影片</a>
       </div>
       <div style="margin-top:20px;text-align:center">
-        <a href="image/full_fire.mp4" target="_blank" class="video-link">
-          ▶ 點此觀看完整火焰效果影片
-        </a>
+        <a href="image/full_lighting.mp4" target="_blank" class="video-link">▶ 點此觀看完整閃電效果影片</a>
       </div>
+        <div class="card">
+          <div class="shot"><img src="image/shader_fire_3.png" alt="Prefab 資源打包畫面"/></div>
+          <div style="margin-top:8px;color:#9bb0ff">Prefab 總資源(458kb)：材質 / Shader / 貼圖 / 腳本</div>
+        </div>
+          <div class="card">
+          <div class="shot"><img src="image/shader_lighting.png" alt="Prefab 資源打包畫面"/></div>
+          <div style="margin-top:8px;color:#9bb0ff">Prefab 總資源(20kb)：材質 / Shader / 貼圖 / 腳本</div>
+        </div>
+
+      </div>
+      
     </section>
 
     <section id="compare">
@@ -113,69 +246,323 @@
         </table>
       </div>
     </section>
-
-    <section id="conclusion">
-      <h2>📌 優化後結論</h2>
-      <div class="card">
-        <p><b>Shader 特效：</b>適合強調效能、跨平台、動態控制的需求，能大幅減少圖量資源並提升效能表現。</p>
-        <p><b>傳統整頁特效：</b>適合一次性場景或需要精緻細節與固定效果的情境，直觀且所見即所得。</p>
-        <p><b>混合使用：</b>在專案中可靈活搭配，主動態效果交由 Shader，細節裝飾或特殊場景交給整頁貼圖，兼顧效能與美術表現。</p>
-        <p><b>AI 技術導入：</b>隨著 GPT、Stable Diffusion 等生成式 AI 的加入，美術製作門檻大幅降低，不僅能快速生成貼圖、噪聲圖與序列幀，也能透過與 GPT 的來回互動獲得即時的程式範例與製作步驟。AI 已逐漸成為新一代美術特效製作流程的一環，讓團隊更快迭代、更有效率地完成跨平台特效設計。</p>
-      </div>
-    </section>
   </div>
 
-  <!-- 美術運用 AI 優勢製程 -->
+  <!-- 美術運用 AI 優勢 -->
   <div id="tab-art" class="tab-content">
     <section id="ai-art">
       <h2>🎨 美術如何運用 AI 優勢優化製作流程</h2>
       <div class="card">
-        <h3>1. 素材生成加速</h3>
+        <h3><span class="highlight">1. 素材生成加速</span></h3>
         <p>快速生成貼圖：透過 Stable Diffusion 或其他影像生成 AI，可快速產生高解析度貼圖（如火焰、煙霧、石材、布料、金屬紋理）。</p>
         <p>自動化噪聲圖/遮罩圖：Shader 製作常需用到的 Noise/Mask，AI 可自動生成變化豐富的圖像。</p>
-        <p>序列幀動畫：能自動輸出火焰、爆炸、流光等 Flipbook，但目前這塊只能提供簡單的序列.還是需要特效製作修飾與調整細節。</p>
+        <p>AI動畫生成：可自動產出角色指定的動態影片，雖然目前僅提供影片格式，但能有效提取角色動作部件，轉換為可用於 SPINE 動畫的素材，顯著提升動作拆解與量產效率。</p>
 
-        <h3>2. 程式與製作輔助</h3>
+        <h3><span class="highlight">2. 程式與製作輔助</span></h3>
         <p>即時獲取程式碼：透過 GPT 快速取得 Unity Shader / C# 腳本範例。</p>
         <p>自動化製作流程：可請 GPT 提供一鍵化流程腳本，加速 prefab、shader 配置。</p>
         <p>錯誤排查協助：Shader 或腳本 bug 時，AI 能協助 debug。</p>
 
-        <h3>3. 跨平台效能優化</h3>
+        <h3><span class="highlight">3. 跨平台效能優化</span></h3>
         <p>多平台貼圖縮放與格式轉換：AI 批次輸出適合各平台的壓縮格式。</p>
         <p>Shader 參數最佳化：GPT 建議精簡 Shader、降低 Draw Call。</p>
         <p>動態測試：AI 提供測試腳本，快速檢查不同硬體的效果。</p>
 
-        <h3>4. 迭代與實驗</h3>
+        <h3><span class="highlight">4. 迭代與實驗</span></h3>
         <p>快速原型：AI 能短時間輸出多組效果圖或動畫，供比較。</p>
         <p>版本管理：AI 可生成不同風格素材，幫助探索多樣性。</p>
         <p>互動式教學：美術視覺化調整可邊問 GPT 技術問題，邊得到操作步驟，不像以往會因程式技術問題卡關。</p>
 
-        <h3>5. 團隊合作與知識沉澱</h3>
-        <p>降低學習門檻：美術可透過 GPT 學習 Shader 與特效。</p>
+        <h3><span class="highlight">5. 團隊合作與知識沉澱</span></h3>
+        <p>降低學習門檻：美術可透過 GPT 學習 Shader 與腳本製作。</p>
         <p>標準化流程文件：AI 整理技術文檔與教學手冊。</p>
         <p>快速溝通橋樑：GPT 程式範例作為美術與程式的溝通基礎。</p>
 
         <h3>📌 優化後的流程總結</h3>
-        <p>AI 生成初稿 → 美術視覺調整與修飾 → AI 協助整合 → 跨平台測試 → 文件與教學</p>
+        <div class="card">
+          <div class="shot"><img src="image/flowChart.png" alt="流程圖"/></div>
+          <div style="margin-top:8px;color:#9bb0ff">AI實作應用流程</div>
+        </div>
         <p>👉 結合 Stable Diffusion + GPT，形成閉環，雖然還需來回測試實作，但已加速迭代並降低成本。</p>
       </div>
     </section>
   </div>
 
-  <p class="footer">© 2025 — Unity Shader 展示 & 美術 AI 製程（最終版）</p>
+  <!-- 原畫＋AI 工作流（含導入報告 + 模型對比 + 圖片/影片展示） -->
+  <div id="tab-workflow" class="tab-content">
+    <section id="intro-ai">
+      <h2>🧩 原畫＋AI 工作流</h2>
+      <div class="card">
+        <p><b>背景：</b>在快速變化的數位內容產業中，效率與創新是我們的核心驅動力。團隊已導入並積極測試 Gemini Banana .MJ.GPT各大廠AI技術，優化原畫製作流程、縮短週期並降低成本。</p>
+        <p><b>痛點：</b>傳統原畫從概念、草圖到精修耗時且資源密集；面對高品質與快速交付的市場需求，迫切需要技術創新。</p>
+      </div>
+    </section>
+
+
+    <!-- 國外大模型 vs 自訓 SD：人力與成本效益對比 -->
+    <section id="model-compare">
+      <h2>🌍 國外大模型 vs 自訓 SD 模型：人力與成本效益對比</h2>
+      <div class="card">
+        <p>導入生成式 AI 技術時，企業常在「採用國際成熟大模型」與「自建訓練本地 SD」兩策略間取捨。以下從 <b>人力、資金、維護、彈性</b> 比較：</p>
+      </div>
+
+      <div class="card" style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th> 項目 </th>
+              <th>採用國外大模型（如 Google Gemini Banana）</th>
+              <th>自訓開源模型（Stable Diffusion / ComfyUI）</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>前期投入</b></td>
+              <td>幾乎零部署，可直接使用；不需資料標註、訓練與硬體建構。</td>
+              <td>需投入 GPU/雲端算力並建數據流程，月費＋部屬工程時間曠時費日。</td>
+            </tr>
+            <tr>
+              <td><b>人力需求</b></td>
+              <td>1–2 位原畫師即可上線。</td>
+              <td>3–5 位工程/資料標註人員，且需長期維護。</td>
+            </tr>
+            <tr>
+              <td><b>產出效率</b></td>
+              <td>即時生成，API/雲端整合快。</td>
+              <td>訓練/微調週期長，導入與更新慢。</td>
+            </tr>
+            <tr>
+              <td><b>品質穩定度</b></td>
+              <td>依賴超大規模數據，泛化與一致性強。</td>
+              <td>高度依賴自有資料品質，易受偏差影響。</td>
+            </tr>
+            <tr>
+              <td><b>客製化彈性</b></td>
+              <td>以提示詞與參數快速變化，無需再訓練。</td>
+              <td>可完全控制權重風格，但需高技術與時間成本。</td>
+            </tr>
+            <tr>
+              <td><b>維護成本</b></td>
+              <td>由供應商維護升級；內部幾乎零維護。</td>
+              <td>需維護 GPU/儲存/升級，半年至一年可能重訓。</td>
+            </tr>
+            <tr>
+              <td><b>總體成本（年）</b></td>
+              <td>授權/API 用量計費；約為自訓方案的10–20%。</td>
+              <td>含硬體/電費/人力/標註/維運，約為國外模型 4–6 倍。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+
+    <section id="report-text">
+      <h2>📄 原畫團隊導入報告</h2>
+      <div class="card">
+        <p>在當今快速變化的數位內容產業中，效率與創新是我們保持競爭力的核心驅動力。我們的原畫團隊已成功導入並積極測試各大廠AI技術，旨在透過其卓越的圖像生成能力，顯著優化我們的原畫製作流程，並為公司帶來前所未有的效率提升與成本節約。</p>
+        <p>傳統的原畫製作流程，從概念發想、草圖勾勒到精細繪製，往往耗時且資源密集。為了應對市場對高品質內容日益增長的需求，同時確保專案進度，我們一直在尋求技術創新以突破現有瓶頸。</p>
+        <p><span class="highlight">AI 輔助工具的策略性選擇：為何是 Gemini Banana .MJ.GPT各大廠AI技術？</span></p>
+        <p>當前市場上有許多開源的生成式 AI 工具，如基於 Stable Diffusion (SD) 框架的 ComfyUI。這些工具雖然強大，但普遍存在以下挑戰：</p>
+        <p><b>高昂的前期投入：</b> 部署 ComfyUI 或 SD 這類工具，往往需要企業投入大量的人力與時間成本進行模型訓練、微調，以及複雜的工作流搭建。這包括收集與標註龐大的專屬數據集、持續的硬體維護與升級，以及專業技術人員的長期維護。對於追求快速迭代和高效產出的創意團隊而言，這是一筆不小的隱性開銷。</p>
+        <p><b>複雜的學習曲線：</b> 這些工具通常具備高度的客製化彈性，但其複雜的節點式工作流和參數調整，也意味著較高的學習門檻和更長的上手時間，這會分散原畫師的精力，並可能減緩初期導入的效果。</p>
+        <p>相較之下，Gemini Banana .MJ.GPT各大廠AI技術， 則提供了一個更為精簡、高效且開箱即用的解決方案，其獨特優勢體現在：</p>
+        <p><b><span class="highlight-blue">從概念到視覺的瞬時轉化，輕量化部署：</span></b> 透過 大廠AI技術，我們的原畫師能將線稿、構圖或文字描述即時轉化為高品質、風格一致的圖素，極大縮短從「想法」到「初步視覺呈現」的時間。</p>
+        <p><b><span class="highlight-blue">線稿與構圖的智慧延伸，操作直觀：</span></b> 大廠AI技術 能基於簡易線稿快速生成多樣化圖素，介面直觀，讓原畫師專注創作發想而非工具調校。</p>
+        <p><b><span class="highlight-blue">顯著提升生產效率與專注度：</span></b> AI 生成基礎圖素，再於 Photoshop 精修整合，初步數據顯示可節省約半數繪製時間。</p>
+        <p><b><span class="highlight-blue">優化資源配置與成本效益：</span></b> 以更短週期與更低維運投入換取更高產能，避免自建系統的沈沒成本。</p>
+      </div>
+    </section>
+
+    
+
+      <div class="card">
+        <h3 style="margin:0 0 8px">📊 分析結論</h3>
+        <ul style="margin:0; padding-left:20px">
+          <li><b>成本與速度：</b>採用國際大模型可省逾 70% 前期投入與維運人力，快速形成「即用即創」產線。</li>
+          <li><b>長期彈性：</b><span class="highlight">自訓 SD 的高成本與門檻在模型快速迭代與即插即用服務爆發下，不再是多數企業首選。</span></li>
+          <li><b>策略建議：</b>以 Gemini/MJ/GPT 為主生成引擎，搭配少量 SD 進行特定風格微調，形成高效混合式工作流。</li>
+        </ul>
+      </div>
+    </section>
+
+  <!-- 工作流展示：圖片與影片（卡片文字置於下方） -->
+<h3>📌 AI+PSD原畫實作應用流程總結</h3>
+<div class="card">
+  <div class="shot">
+    <img src="image/AI+PSD原畫實作應用流程.png" alt="流程圖"/>
+  </div>
+  <div style="margin-top:8px;color:#9bb0ff">AI+PSD原畫實作應用流程</div>
+</div>
+<p>👉 結合 Stable Diffusion + GPT，形成閉環，運用指令產生各種動作與角度，最終依照需求拆圖與製作動態。</p>
+
+
+<!-- 🖼️ 成果展示（僅顯示於原畫＋AI 工作流分頁） -->
+<section id="mj-gallery">
+  <h2>🖼️ 成果展示（運用設定單張角色延生多個角度部件素材，無須建模與重繪，節省製作成本。）</h2>
+  <div class="hscroll">
+
+    <!-- 圖片 -->
+    <div class="ph">
+      <div class="media">
+        <img src="image/coin.png" data-full="image/coin.png" alt="coinDemo 圖片">
+      </div>
+      <div class="cap">coinDemo 圖片</div>
+    </div>
+
+    <!-- 影片（mp4/webm；若無 poster 會自動擷取首幀） -->
+    <div class="ph">
+      <div class="media">
+        <video
+          src="image/ani_coin.mp4"
+          data-full="image/ani_coin.mp4"
+          muted playsinline loop preload="metadata">
+        </video>
+      </div>
+      <div class="cap">AI運算coin旋轉循環動畫（影片 mp4）</div>
+    </div>
+
+    <!-- 圖片 -->
+    <div class="ph">
+      <div class="media">
+        <img src="image/run.png" data-full="image/run.png" alt="角色跑步示意（圖）">
+      </div>
+      <div class="cap">角色跑步示意（圖）</div>
+    </div>
+
+    <!-- 影片 -->
+    <div class="ph">
+      <div class="media">
+        <video
+          src="image/ani_run.mp4"
+          data-full="image/ani_run.mp4"
+          muted playsinline loop preload="metadata">
+        </video>
+      </div>
+      <div class="cap">AI運算角色跑步循環（影片 mp4）</div>
+    </div>
+
+    <!-- 影片 -->
+    <div class="ph">
+      <div class="media">
+        <video
+          src="image/ani_run2.mp4"
+          data-full="image/ani_run2.mp4"
+          muted playsinline loop preload="metadata">
+        </video>
+      </div>
+      <div class="cap">AI運算角色跑步循環（影片 mp4）</div>
+    </div>
+
+    <!-- 圖片 -->
+    <div class="ph">
+      <div class="media">
+        <img src="image/lion_emoji.png" data-full="image/lion_emoji.png" alt="lion_emoji">
+      </div>
+      <div class="cap">lion_emoji</div>
+    </div>
+
+    <!-- 其他 -->
+    <div class="ph">
+      <div class="media">
+        <img src="image/Gemini_修正大砲角度.png" alt="Gemini_修正大砲角度">
+      </div>
+      <div class="cap">Gemini_修正大砲角度</div>
+    </div>
+
+    <!-- 影片 -->
+    <div class="ph">
+      <div class="media">
+        <video
+          src="image/ani_shoot.mp4"
+          data-full="image/ani_shoot.mp4"
+          muted playsinline loop preload="metadata">
+        </video>
+      </div>
+      <div class="cap">AI運算角色轉換角度（影片 mp4）</div>
+    </div>
+
+    <!-- 圖片 -->
+    <div class="ph">
+      <div class="media">
+        <img src="image/Gemini_wing部件製作.png" alt="Gemini_wing部件製作">
+      </div>
+      <div class="cap">Gemini_wing部件製作</div>
+    </div>
+
+    <!-- 圖片 -->
+    <div class="ph">
+      <div class="media">
+        <img src="image/tinman.png" alt="MJ咒語腳色抽卡+psd整合">
+      </div>
+      <div class="cap">MJ咒語腳色抽卡+psd整合</div>
+    </div>
+
+    <!-- 圖片 -->
+    <div class="ph">
+      <div class="media">
+        <img src="image/MJ_demo.png" alt="MJ咒語腳色抽卡+psd整合">
+      </div>
+      <div class="cap">MJ咒語腳色抽卡+psd整合</div>
+    </div>
+
+    <!-- 圖片 -->
+    <div class="ph">
+      <div class="media">
+        <img src="image/AI_logo修改.png" alt="AI算圖+psd整合">
+      </div>
+      <div class="cap">AI算圖+psd整合</div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:8px;color:#9bb0ff">說明：點擊圖/影片可放大預覽；左右方向鍵可切換。</div>
+</section>
+
+<!-- Lightbox 容器（由 JS 動態插入內容） -->
+<div id="lightbox" class="lightbox" aria-hidden="true">
+  <button class="nav prev" aria-label="上一張">‹</button>
+  <button class="nav next" aria-label="下一張">›</button>
+  <button class="close" aria-label="關閉">✕</button>
 </div>
 
+
+
+</script>
+  <p class="footer">© 2025 — Unity Shader 展示 & 美術 AI 製程</p>
+</div>
+
+<!-- 右側浮動「回到頁籤」按鈕 -->
+<button id="backToTabs" class="float-back" aria-label="回到頁籤">↑</button>
+
 <script>
+/* --- Tab 切換 --- */
 function showTabById(tabId){
-  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.getElementById(tabId).classList.add('active');
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  const btn=document.querySelector(`.tab-btn[data-target="${tabId}"]`);
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.querySelector(`.tab-btn[data-target="${tabId}"]`);
   if(btn) btn.classList.add('active');
 }
-document.querySelectorAll('.tab-btn').forEach(b=>{
+
+document.querySelectorAll('.tab-btn').forEach(b => {
   b.addEventListener('click', ()=>showTabById(b.dataset.target));
 });
+
+/* --- 回到頁籤按鈕功能 --- */
+
+document.getElementById("backToTabs").addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+window.addEventListener("scroll", () => {
+  const btn = document.getElementById("backToTabs");
+  btn.style.display = window.scrollY > window.innerHeight / 2 ? "block" : "none";
+});
+
 </script>
+</body>
+</html>
+
+
 </body>
 </html>
